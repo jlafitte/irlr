@@ -1,0 +1,5 @@
+[main]
+url = http://www.google.com
+interval = 5000
+wait = 30000
+filename = web.config
