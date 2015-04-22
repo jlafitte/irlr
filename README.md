@@ -1,1 +1,1 @@
-# IIS Redirect Loop Rectifiery
+# IIS Redirect Loop Rectifier
