@@ -1,5 +1,5 @@
 [main]
 url = http://www.google.com
 interval = 5
-wait = 3
-filename = web.config
+wait = 30
+filename = web.config  # use / here even for windows as gcfg doesn't seem to support the \ character even escaped.
