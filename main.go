@@ -19,35 +19,25 @@ type config struct {
 	}
 }
 
+func writeit(file string, when string, what string) {
+	f, _ := os.OpenFile(file, os.O_APPEND|os.O_WRONLY, 0600)
+	defer f.Close()
+	f.WriteString("<!-- redirect loop detected, restarted at: " + when + " Status: " + what + " -->\n")
+}
+
 func main() {
 	var cfg config
 	gcfg.ReadFileInto(&cfg, "config.gcfg")
 
-	// url := "http://localhost:9090"
-	// interval := time.Duration(5000)
-	// naptime := time.Duration(30000)
-	// filename := "web.config"
-
-	ticker := time.NewTicker(time.Millisecond * time.Duration(cfg.Main.Interval))
+	ticker := time.NewTicker(time.Second * time.Duration(cfg.Main.Interval))
 	for now := range ticker.C {
 		resp, err := http.Get(cfg.Main.URL)
 		//	var status string
 
 		if (err != nil) || (resp.StatusCode > 299 && resp.StatusCode < 400) {
-			f, err := os.OpenFile(cfg.Main.Filename, os.O_APPEND|os.O_WRONLY, 0600)
-			if err != nil {
-				panic(err)
-			}
-
-			defer f.Close()
-
-			if _, err = f.WriteString("<!-- redirect loop detected, restarted at: " + now.Format(time.RFC1123) + " Status: " + strconv.Itoa(resp.StatusCode) + " -->\n"); err != nil {
-				panic(err)
-			}
-			fmt.Println(resp.StatusCode, "at", now, " - Updating", cfg.Main.Filename, "and sleeping for", (cfg.Main.Wait / 1000), "seconds")
-
-			time.Sleep(time.Duration(cfg.Main.Wait) * time.Millisecond)
-
+			writeit(cfg.Main.Filename, now.Format(time.RFC1123), strconv.Itoa(resp.StatusCode))
+			fmt.Println(resp.StatusCode, "at", now, " - Updating", cfg.Main.Filename, "and sleeping for", cfg.Main.Wait, "seconds")
+			time.Sleep(time.Duration(cfg.Main.Wait) * time.Second)
 		} else {
 			fmt.Println(resp.StatusCode, "at", now)
 		}
