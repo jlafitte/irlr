@@ -23,12 +23,12 @@ type config struct {
 func writeit(file string, when string, what string) {
 	f, _ := os.OpenFile(file, os.O_APPEND|os.O_WRONLY, 0600)
 	defer f.Close()
-	f.WriteString("<!-- redirect loop detected, restarted at: " + when + " Status: " + what + " -->\n")
+	f.WriteString("<!-- redirect loop detected, restarted at: " + when + " Status: " + what + " -->\r\n")
 }
 
 func main() {
 	var cfg config
-	gcfg.ReadFileInto(&cfg, "config.gcfg")
+	gcfg.ReadFileInto(&cfg, "config.ini")
 
 	recovered := true
 
